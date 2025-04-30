@@ -5,29 +5,29 @@ function createProject(name) {
   return { name, tasks: [] };
 }
 
-function createTask(title, description = "", dueDate = "", priority = "low", checklist = "", completed = false) {
-  return { title, description, dueDate, priority, checklist, completed };
+function createTask(title, description = "", dueDate = "", priority = "low", completed = false) {
+  return { title, description, dueDate, priority, completed };
 }
 
 // ——— localStorage helpers ————————————————————————————
 const STORAGE_KEY = "todo-projects";
 
+function loadProjects() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    console.warn("Could not parse projects—resetting storage.");
+    localStorage.removeItem(STORAGE_KEY);
+    return null;
+  }
+}
+
 function saveProjects(projects) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
 }
 
-function loadProjects() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return null;
-  try { 
-    return JSON.parse(raw);
-  } catch {
-    console.warn("Could not parse projects-resetting storage.");
-    localStorage.removeItem(STORAGE_KEY);
-    return null;
-  }
-
-}
 // ——— App state ————————————————————————————————————————
 let projects = [];
 let currentProject = null;
@@ -43,7 +43,7 @@ export function generateLayout() {
   clearElement(container);
 
   // Sidebar
-  const sidebar = document.createElement(div);
+  const sidebar = document.createElement("aside");
   sidebar.classList.add("sidebar");
 
   const h2 = document.createElement("h2");
@@ -58,7 +58,6 @@ export function generateLayout() {
   btnNewProj.id = "add-project";
   btnNewProj.textContent = "+ New Project";
   sidebar.appendChild(btnNewProj);
-
 
   // Main area
   const main = document.createElement("main");
@@ -79,14 +78,14 @@ export function generateLayout() {
 
   container.appendChild(sidebar);
   container.appendChild(main);
-
 }
+
 // ——— Rendering and persistence ———————————————————————
 function renderProjects() {
   const ul = document.getElementById("project-list");
   clearElement(ul);
   projects.forEach((proj) => {
-    const li = document.createElement('li');
+    const li = document.createElement("li");
     li.textContent = proj.name;
     if (proj === currentProject) li.classList.add("active");
     li.addEventListener("click", () => {
@@ -141,8 +140,6 @@ function saveAndRender() {
   renderTasks();
 }
 
-
-
 // ——— UI event bindings —————————————————————————————
 function initEventListeners() {
   document.getElementById("add-project").addEventListener("click", () => {
@@ -164,7 +161,6 @@ function initEventListeners() {
     saveAndRender();
   });
 }
-
 
 // ——— Bootstrapping ————————————————————————————————
 export function initApp() {
