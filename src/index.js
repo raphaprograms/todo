@@ -1,4 +1,3 @@
-import "./styles.css";
-import { list } from "./list.js";
+import { initApp } from "./list.js";
 
-console.log(list);
+document.addEventListener("DOMContentLoaded", initApp);
